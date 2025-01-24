@@ -2,15 +2,15 @@ package de.till.todo.user.auth;
 
 import de.till.todo.user.*;
 import de.till.todo.user.token.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
@@ -18,20 +18,20 @@ import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final JwtUtil jwtUtil;
+    private final UserMapper userMapper;
+    private final LoginMapper loginMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private UserMapper userMapper;
-
-    @Autowired
-    private LoginMapper loginMapper;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public AuthController(UserService userService, JwtUtil jwtUtil, UserMapper userMapper, LoginMapper loginMapper, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.jwtUtil = jwtUtil;
+        this.userMapper = userMapper;
+        this.loginMapper = loginMapper;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @PostMapping(path = "/register")
     public ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody UserDTO userDTO) {
@@ -43,12 +43,23 @@ public class AuthController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<LoginResponseDTO> loginUser(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginDTO loginDTO, HttpServletResponse response) {
         User existingUser = userService.findByEmail(loginDTO.getEmail());
-        if(existingUser != null && passwordEncoder.matches(loginDTO.getPassword(), existingUser.getPassword())) {
+        if (existingUser != null && passwordEncoder.matches(loginDTO.getPassword(), existingUser.getPassword())) {
             String token = jwtUtil.generateToken(existingUser);
 
-            return ResponseEntity.ok(loginMapper.toLoginResponseDTO(token, existingUser));
+
+            ResponseCookie cookie = ResponseCookie.from("accessToken")
+                    .value(token)
+                    .httpOnly(true)
+                    .secure(false)
+                    .sameSite("Lax")
+                    .path("/")
+                    .maxAge(7 * 24 * 60 * 60)
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            return ResponseEntity.ok().body("success");
         }
         return ResponseEntity.status(UNAUTHORIZED).build();
     }
@@ -56,5 +67,16 @@ public class AuthController {
     @PostMapping(path = "/logout")
     public ResponseEntity<String> logoutUser() {
         return ResponseEntity.ok("{message: Logout successful}");
+    }
+
+    @GetMapping(path = "/me")
+    public ResponseEntity<UserResponseDTO> getCurrentUser() {
+        User currentUser = userService.getCurrentUser();
+
+        if (currentUser == null) {
+            return ResponseEntity.status(UNAUTHORIZED).build();
+        }
+
+        return ResponseEntity.ok(userMapper.toUserResponseDTO(currentUser));
     }
 }

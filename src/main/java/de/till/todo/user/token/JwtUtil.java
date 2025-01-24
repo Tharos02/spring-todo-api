@@ -3,8 +3,6 @@ package de.till.todo.user.token;
 import de.till.todo.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,6 +20,9 @@ public class JwtUtil {
 
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
+
+    public JwtUtil() {
+    }
 
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
@@ -41,8 +42,6 @@ public class JwtUtil {
 
     protected boolean validateToken(String token, User user) {
         final String extractedUsername = extractEmail(token);
-        System.out.println("TEST-Emailö: " + extractedUsername);
-        System.out.println("TEST-Valid: " + (extractedUsername.equals(user.getEmail()) && !isTokenExpired(token)));
         return (extractedUsername.equals(user.getEmail()) && !isTokenExpired(token));
     }
 

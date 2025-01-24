@@ -29,10 +29,7 @@ public class TaskService {
     }
 
     @Transactional
-    public Task createTask(TaskDTO taskDTO) {
-        User user = userRepository.findById(taskDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User mit der Id " + taskDTO.getUserId() + " wurde nicht gefunden"));
-        Task task = taskDTO.toTask(user);
+    public Task createTask(Task task) {
         return taskRepository.save(task);
     }
 
@@ -47,6 +44,10 @@ public class TaskService {
 
     public Task getTaskById(Long id) {
         return taskRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task with ID " + id + " not found."));
+    }
+
+    public List<Task> getTaskByUser(User user) {
+        return taskRepository.findByUser(user);
     }
 
 }

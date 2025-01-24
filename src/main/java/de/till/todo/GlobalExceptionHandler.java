@@ -1,5 +1,6 @@
 package de.till.todo;
 
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
-                                                                  HttpStatusCode status,
-                                                                  WebRequest request) {
+                                                               HttpHeaders headers,
+                                                               HttpStatusCode status,
+                                                               WebRequest request) {
         Map<String, List<String>> body = new HashMap<>();
 
         List<String> errors = ex.getBindingResult()
