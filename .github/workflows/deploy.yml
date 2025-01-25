@@ -42,8 +42,7 @@ jobs:
         sudo mv cli_v1.1.0 /usr/local/bin/render  
 
     - name: Trigger deploy with Render CLI
-      env:
-        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  
-        CI: true  
       run: |
+        export RENDER_API_TOKEN=${{ secrets.RENDER_API_TOKEN }}
+        render login
         render deploys create ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --image ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --wait  # Docker Image auf Render deployen
