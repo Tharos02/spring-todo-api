@@ -24,19 +24,13 @@ import java.util.*;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-
-    private UserRepository userRepository;
-
-    public JwtRequestFilter(JwtUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+    private final UserRepository userRepository;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    public JwtRequestFilter(JwtUtil jwtUtil, UserRepository userRepository) {
+        this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
     }
-
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
