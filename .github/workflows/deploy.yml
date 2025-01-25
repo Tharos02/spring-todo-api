@@ -46,4 +46,4 @@ jobs:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  
         CI: true  
       run: |
-        render deploys create ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --image ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --wait  # Docker Image auf Render deployen
+        render deploys create ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --image ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --wait --confirm --output json
