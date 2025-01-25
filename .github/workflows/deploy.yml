@@ -16,6 +16,19 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
 
+    - name: Create application-dev.properties
+      run: |
+        echo "application.security.jwt.expiration=${{ secrets.JWT_EXPIRATION }}" > application-dev.properties
+        echo "application.security.jwt.secret-key=${{ secrets.JWT_SECRET_KEY }}" >> application-dev.properties
+        echo "spring.datasource.url=${{ secrets.DATABASE_URL }}" >> application-dev.properties
+        echo "spring.datasource.username=${{ secrets.DATABASE_USERNAME }}" >> application-dev.properties
+        echo "spring.datasource.password=${{ secrets.DATABASE_PASSWORD }}" >> application-dev.properties
+        echo "spring.jpa.hibernate.ddl-auto=update" >> application-dev.properties
+        echo "spring.jpa.show-sql=true" >> application-dev.properties
+        echo "spring.jpa.properties.hibernate.format_sql=true" >> application-dev.properties
+        echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> application-dev.properties
+        echo "spring.application.name=Todo" >> application-dev.properties
+
     - name: Build Docker image
       run: |
         docker build --build-arg SPRING_PROFILES_ACTIVE=dev --platform=linux/amd64 -t ${{ secrets.DOCKER_USERNAME }}/todo-api:dev .
