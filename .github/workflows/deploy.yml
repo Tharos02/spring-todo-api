@@ -37,9 +37,8 @@ jobs:
     steps:
     - name: Install Render CLI
       run: |
-        curl -fsSL https://render.com/deploy.sh | bash  # Installiert Render CLI
-        echo "Render CLI installed successfully"  # Ausgabe zur Bestätigung
-
+        curl -fsSL https://raw.githubusercontent.com/render-oss/cli/refs/heads/main/bin/install.sh | sh
+        
     - name: Log in to Render
       run: |
         render login --token ${{ secrets.RENDER_API_TOKEN }}  # Loggt dich bei Render ein
