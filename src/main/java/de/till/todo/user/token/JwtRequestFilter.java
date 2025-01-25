@@ -27,6 +27,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private UserRepository userRepository;
 
+    @Autowired
     public JwtRequestFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
@@ -35,6 +36,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
 
 
     @Override
