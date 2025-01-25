@@ -35,9 +35,6 @@ jobs:
     
     - name: List files in current directory
       run: ls -la
-    
-    - name: Show content of application-dev.properties
-      run: cat application-dev.properties
 
     - name: Build Docker image
       run: |
