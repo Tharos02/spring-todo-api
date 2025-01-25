@@ -35,14 +35,15 @@ jobs:
     needs: build
     
     steps:
-        - name: Install Render CLI
-          run: |
-            curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
-            unzip render.zip
-            sudo mv cli_v1.1.0 /usr/local/bin/render
-        - name: Trigger deploy with Render CLI
-          env:
-            RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-            CI: true
-            run: |
-              render deploy --service spring-todo-api --docker tharos02/todo-api:dev  
+    - name: Install Render CLI
+      run: |
+        curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip  
+        unzip render.zip  
+        sudo mv cli_v1.1.0 /usr/local/bin/render  
+
+    - name: Trigger deploy with Render CLI
+      env:
+        RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  
+        CI: true  
+      run: |
+        render deploy --service spring-todo-api --docker tharos02/todo-api:dev  # Docker Image auf Render deployen
