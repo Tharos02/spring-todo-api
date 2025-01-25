@@ -18,7 +18,7 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t tharos02/todo-api:dev .
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-api:dev .
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -28,7 +28,7 @@ jobs:
 
     - name: Push Docker image to Docker Hub
       run: |
-        docker push tharos02/todo-api:dev
+        docker push ${{ secrets.DOCKER_USERNAME }}/todo-api:dev
 
   deploy:
     runs-on: ubuntu-latest
@@ -46,4 +46,4 @@ jobs:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  
         CI: true  
       run: |
-        render deploys --service spring-todo-api --docker tharos02/todo-api:dev  # Docker Image auf Render deployen
+        render deploys create --service spring-todo-api --docker ${{ secrets.DOCKER_USERNAME }}/todo-api:dev  # Docker Image auf Render deployen
