@@ -44,5 +44,5 @@ jobs:
     - name: Trigger deploy with Render CLI
       run: |
         export RENDER_API_KEY=${{ secrets.RENDER_API_TOKEN }}
-        render workspace set ${{ secrets.WORKSPACE_ID }} --output json -o 
-        render deploys create ${{ secrets.SERVICE_ID }} --image ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --wait --confirm --output json -o
+        render workspace set ${{ secrets.WORKSPACE_ID }} --output json -o json
+        render deploys create ${{ secrets.SERVICE_ID }} --image ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --wait --confirm --output json -o json
