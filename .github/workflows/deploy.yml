@@ -46,4 +46,4 @@ jobs:
         RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}  
         CI: true  
       run: |
-        render deploy --service spring-todo-api --docker tharos02/todo-api:dev  # Docker Image auf Render deployen
+        render deploys --service spring-todo-api --docker tharos02/todo-api:dev  # Docker Image auf Render deployen
