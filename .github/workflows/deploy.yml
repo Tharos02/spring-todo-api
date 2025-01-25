@@ -13,17 +13,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_TOKEN }}
-
     - name: Build and push Docker image
-      uses: docker/build-push-action@v5 
+      uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./Dockerfile
+        file: ./Dockerfile # Falls du eine Dockerfile hast
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/todo-api:dev
         build-args: |
