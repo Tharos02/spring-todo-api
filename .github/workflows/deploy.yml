@@ -1,0 +1,48 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - main  
+      
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-api:dev .
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}  
+        password: ${{ secrets.DOCKER_TOKEN }}   
+
+    - name: Push Docker image to Docker Hub
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/todo-api:dev
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Install Render CLI
+      run: |
+        curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip  
+        unzip render.zip  
+        sudo mv cli_v1.1.0 /usr/local/bin/render  
+
+    - name: Trigger deploy with Render CLI
+      run: |
+        export RENDER_API_KEY=${{ secrets.RENDER_API_TOKEN }}
+        render workspace set ${{ secrets.WORKSPACE_ID }} --output json -o json
+        render deploys create ${{ secrets.SERVICE_ID }} --image ${{ secrets.DOCKER_USERNAME }}/todo-api:dev --wait --confirm --output json -o json
