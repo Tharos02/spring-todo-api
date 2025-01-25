@@ -28,7 +28,15 @@ jobs:
         echo "spring.jpa.properties.hibernate.format_sql=true" >> application-dev.properties
         echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect" >> application-dev.properties
         echo "spring.application.name=Todo" >> application-dev.properties
-        cat application-dev.properties
+
+    - name: Show current directory
+      run: pwd
+    
+    - name: List files in current directory
+      run: ls -la
+    
+    - name: Show content of application-dev.properties
+      run: cat application-dev.properties
 
     - name: Build Docker image
       run: |
