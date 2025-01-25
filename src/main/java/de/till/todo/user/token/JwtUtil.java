@@ -23,10 +23,6 @@ public class JwtUtil {
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
-    public JwtUtil() {
-    }
-
-
     public String generateToken(User user) {
         Map<String, Object> claims = new HashMap<>();
 
