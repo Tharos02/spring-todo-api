@@ -44,8 +44,5 @@ jobs:
           env:
             RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
             CI: true
-
-        - name: Deploy Docker image to Render
-          run: |
-            render deploy --service spring-todo-api --docker tharos02/todo-api:dev  
-            echo "Deployment to Render completed successfully"  
+            run: |
+              render deploy --service spring-todo-api --docker tharos02/todo-api:dev  
