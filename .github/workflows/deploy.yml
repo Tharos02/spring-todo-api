@@ -41,10 +41,10 @@ jobs:
         
     - name: Log in to Render
       run: |
-        render login --token ${{ secrets.RENDER_API_TOKEN }}  # Loggt dich bei Render ein
-        echo "Logged in to Render successfully"  # Bestätigung der Anmeldung
+        export RENDER_API_TOKEN=${{ secrets.RENDER_API_TOKEN }}  # Setzt den Render API-Token als Umgebungsvariable
+        render login  
 
     - name: Deploy Docker image to Render
       run: |
-        render deploy --service spring-todo-api --docker tharos02/todo-api:dev  # Deployt das Docker-Image
-        echo "Deployment to Render completed successfully"  # Bestätigung des Deployments
+        render deploy --service spring-todo-api --docker tharos02/todo-api:dev  
+        echo "Deployment to Render completed successfully"  
