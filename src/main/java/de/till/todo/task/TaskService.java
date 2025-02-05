@@ -1,7 +1,6 @@
 package de.till.todo.task;
 
 import de.till.todo.user.User;
-import de.till.todo.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +15,10 @@ import java.util.Optional;
 public class TaskService {
 
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, UserRepository userRepository) {
+    public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
-        this.userRepository = userRepository;
     }
 
     public List<Task> getTasks() {

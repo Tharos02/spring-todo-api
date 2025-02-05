@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 
+import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestController
@@ -48,7 +49,6 @@ public class AuthController {
         if (existingUser != null && passwordEncoder.matches(loginDTO.getPassword(), existingUser.getPassword())) {
             String token = jwtUtil.generateToken(existingUser);
 
-
             ResponseCookie cookie = ResponseCookie.from("accessToken")
                     .value(token)
                     .httpOnly(true)
@@ -59,7 +59,7 @@ public class AuthController {
                     .build();
 
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-            return ResponseEntity.ok().body("success");
+            return ResponseEntity.status(OK).build();
         }
         return ResponseEntity.status(UNAUTHORIZED).build();
     }

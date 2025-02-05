@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 @RestController
 @RequestMapping(path = "/task")
@@ -41,7 +42,8 @@ public class TaskController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody TaskDTO taskDTO) {
-        User currentUser = userService.getCurrentUser();
+        final User currentUser = userService.getCurrentUser();
+
         if (currentUser == null) {
             return ResponseEntity.status(NOT_FOUND).build();
         }
@@ -56,7 +58,7 @@ public class TaskController {
 
     @GetMapping(path = "/my-tasks")
     public ResponseEntity<List<TaskResponseDTO>> getUserTasks() {
-        User currentUser = userService.getCurrentUser();
+        final User currentUser = userService.getCurrentUser();
 
         if (currentUser == null) {
             return ResponseEntity.status(NOT_FOUND).build();
@@ -73,6 +75,21 @@ public class TaskController {
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable Long id) {
+        final User currentUser = userService.getCurrentUser();
+
+        if (currentUser == null) {
+            return ResponseEntity.status(UNAUTHORIZED).build();
+        }
+
+        Task task = taskService.getTaskById(id);
+
+        if (task == null) {
+            return ResponseEntity.status(NOT_FOUND).build();
+        }
+
+        if (task.getUser() == null || !task.getUser().getId().equals(currentUser.getId())) {
+            return ResponseEntity.status(UNAUTHORIZED).build();
+        }
         return taskService.deleteTask(id);
     }
 
