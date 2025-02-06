@@ -16,6 +16,9 @@ public class TaskDTO {
     @NotNull
     private Priority priority;
 
+    @NotNull
+    private Status status;
+
     public @NotNull @Size(min = 1, max = 255, message = "Der Titel ist zu lang, limit ist 255") String getTitle() {
         return title;
     }
@@ -40,11 +43,30 @@ public class TaskDTO {
         this.priority = priority;
     }
 
+    public @NotNull Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(@NotNull Status status) {
+        this.status = status;
+    }
+
     public Task toTask() {
         Task task = new Task();
         task.setTitle(title);
         task.setDescription(description);
         task.setPriority(priority);
+        task.setStatus(status);
         return task;
+    }
+
+    @Override
+    public String toString() {
+        return "TaskDTO{" +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
+                ", status=" + status +
+                '}';
     }
 }

@@ -26,6 +26,9 @@ public class Task {
     @Enumerated(EnumType.ORDINAL)
     private Priority priority;
 
+    @Enumerated(EnumType.ORDINAL)
+    private Status status;
+
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
@@ -41,24 +44,27 @@ public class Task {
     public Task() {
     }
 
-    public Task(String title, String description, Priority priority, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Task(String title, String description, Priority priority, Status status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.title = title;
         this.description = description;
         this.priority = priority;
+        this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public Task(String title, String description, Priority priority) {
+    public Task(String title, String description, Priority priority, Status status) {
         this.title = title;
         this.description = description;
         this.priority = priority;
+        this.status = status;
     }
 
-    public Task(String title, String description, Priority priority, User user) {
+    public Task(String title, String description, Priority priority, Status status, User user) {
         this.title = title;
         this.description = description;
         this.priority = priority;
+        this.status = status;
         this.user = user;
     }
 
@@ -102,6 +108,14 @@ public class Task {
         this.priority = priority;
     }
 
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -118,5 +132,17 @@ public class Task {
         this.updatedAt = updatedAt;
     }
 
-
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", priority=" + priority +
+                ", status=" + status +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                ", user=" + user +
+                '}';
+    }
 }

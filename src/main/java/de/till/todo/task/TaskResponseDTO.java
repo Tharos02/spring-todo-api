@@ -5,6 +5,7 @@ public class TaskResponseDTO {
     private String title;
     private String description;
     private Priority priority;
+    private Status status;
     private Long userId;
 
     public Long getId() {
@@ -37,6 +38,14 @@ public class TaskResponseDTO {
 
     public void setPriority(Priority priority) {
         this.priority = priority;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public Long getUserId() {

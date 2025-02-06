@@ -65,8 +65,19 @@ public class AuthController {
     }
 
     @PostMapping(path = "/logout")
-    public ResponseEntity<String> logoutUser() {
-        return ResponseEntity.ok("{message: Logout successful}");
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+
+            ResponseCookie cookie = ResponseCookie.from("accessToken")
+                    .value(null)
+                    .httpOnly(true)
+                    .secure(true)
+                    .sameSite("None")
+                    .path("/")
+                    .maxAge(0)
+                    .build();
+
+            response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            return ResponseEntity.status(OK).build();
     }
 
     @GetMapping(path = "/me")

@@ -4,11 +4,14 @@ import de.till.todo.user.User;
 import de.till.todo.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
@@ -42,55 +45,32 @@ public class TaskController {
 
     @PostMapping(path = "/create")
     public ResponseEntity<TaskResponseDTO> createTask(@Valid @RequestBody TaskDTO taskDTO) {
-        final User currentUser = userService.getCurrentUser();
+        TaskResponseDTO createdTaskDTO = taskService.createTask(taskDTO);
+        return ResponseEntity.ok(createdTaskDTO);
+    }
 
-        if (currentUser == null) {
-            return ResponseEntity.status(NOT_FOUND).build();
-        }
-
-        Task newTask = taskDTO.toTask();
-        newTask.setUser(currentUser);
-
-        Task createdTask = taskService.createTask(newTask);
-
-        return ResponseEntity.ok(taskMapper.toTaskResponseDTO(createdTask));
+    @PatchMapping(path = "/update/{id}")
+    public ResponseEntity<TaskResponseDTO> updateTask(@Valid @RequestBody TaskDTO taskDTO, @PathVariable Long id) {
+        TaskResponseDTO updatedTaskDTO = taskService.updateTask(id, taskDTO);
+        return ResponseEntity.ok(updatedTaskDTO);
     }
 
     @GetMapping(path = "/my-tasks")
     public ResponseEntity<List<TaskResponseDTO>> getUserTasks() {
-        final User currentUser = userService.getCurrentUser();
-
-        if (currentUser == null) {
-            return ResponseEntity.status(NOT_FOUND).build();
-        }
-
-        List<Task> tasks = taskService.getTaskByUser(currentUser);
-
-        List<TaskResponseDTO> taskResponseDTOS = tasks.stream()
-                .map(taskMapper::toTaskResponseDTO)
-                .toList();
-
-        return ResponseEntity.ok(taskResponseDTOS);
+        List<TaskResponseDTO> tasks = taskService.getTaskForCurrentUser();
+        return ResponseEntity.ok(tasks);
     }
 
-    @DeleteMapping(path = "/{id}")
-    public ResponseEntity<String> deleteTask(@PathVariable Long id) {
-        final User currentUser = userService.getCurrentUser();
-
-        if (currentUser == null) {
-            return ResponseEntity.status(UNAUTHORIZED).build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        try {
+            taskService.deleteTask(id);
+            return ResponseEntity.noContent().build(); // HTTP 204 No Content
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(NOT_FOUND).build(); // Task nicht gefunden
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(UNAUTHORIZED).build(); // Unauthorized
         }
-
-        Task task = taskService.getTaskById(id);
-
-        if (task == null) {
-            return ResponseEntity.status(NOT_FOUND).build();
-        }
-
-        if (task.getUser() == null || !task.getUser().getId().equals(currentUser.getId())) {
-            return ResponseEntity.status(UNAUTHORIZED).build();
-        }
-        return taskService.deleteTask(id);
     }
 
     @GetMapping(path = "/{id}")
