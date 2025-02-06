@@ -51,6 +51,7 @@ public class AuthController {
 
             ResponseCookie cookie = ResponseCookie.from("accessToken")
                     .value(token)
+                    .domain(".tillweckheuer.de")
                     .httpOnly(true)
                     .secure(true)
                     .sameSite("None")
@@ -69,6 +70,7 @@ public class AuthController {
 
             ResponseCookie cookie = ResponseCookie.from("accessToken")
                     .value(null)
+                    .domain(".tillweckheuer.de")
                     .httpOnly(true)
                     .secure(true)
                     .sameSite("None")
